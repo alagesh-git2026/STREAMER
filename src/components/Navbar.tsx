@@ -26,7 +26,7 @@ export const Navbar: React.FC = () => {
           {/* Brand Logo & Wordmark */}
           <Link to="/" className="flex items-center space-x-3 group">
             <img 
-              src="/lof-logo.png" 
+              src={`${import.meta.env.BASE_URL}lof-logo.png`} 
               alt="Lab of Future - Be Curious" 
               className="h-8 sm:h-9 w-auto object-contain group-hover:scale-105 transition-transform" 
             />

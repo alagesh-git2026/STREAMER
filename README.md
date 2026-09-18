@@ -1,32 +1,52 @@
-# React + TypeScript + Vite
+# STREAMER Portfolio — Lab of Future (LOF)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Internal Analytics & Talent Intelligence Dashboard for **Lab of Future (LOF)** K-12 experiential STEM & STEAM innovation labs operating across **Bengaluru, New Delhi, Dubai, Austin, and Shanghai**.
 
-Currently, two official plugins are available:
+Built with **React 18**, **TypeScript**, **Vite**, **Tailwind CSS**, and **Recharts**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🚀 Live Deployment via GitHub Actions
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This repository is configured with an automated continuous deployment workflow using GitHub Actions (`.github/workflows/deploy.yml`) to publish the application to **GitHub Pages**.
 
-## Expanding the Oxlint configuration
+### One-Time Setup in GitHub Repository Settings
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+To activate deployment on your repository:
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+1. Go to your GitHub repository: [`https://github.com/alagesh-git2026/STREAMER`](https://github.com/alagesh-git2026/STREAMER)
+2. Click on **Settings** (tab at the top).
+3. In the left navigation menu under **Code and automation**, click **Pages**.
+4. Under **Build and deployment** > **Source**, change the dropdown from *Deploy from a branch* to **GitHub Actions**.
+5. Push any commit to the `main` branch (or go to **Actions** > **Deploy to GitHub Pages** > **Run workflow**).
+6. Once the workflow completes, your site will be live at:
+   👉 **`https://alagesh-git2026.github.io/STREAMER/`**
+
+---
+
+## 💻 Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start local development server with Hot Module Replacement
+npm run dev
+
+# Build production bundle with type checking
+npm run build
+
+# Preview production build locally
+npm run preview
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+---
+
+## 🛠️ Tech Stack & Architecture
+
+- **Build Engine:** Vite 6 with React 18 & TypeScript
+- **Styling:** Tailwind CSS 3 with custom brand themes (`streamer-science`, `streamer-technology`, `streamer-engineering`, `streamer-math`)
+- **Data Visualizations:** Recharts (Radar, Bar, Line charts)
+- **Routing:** React Router (HashRouter for seamless GitHub Pages deep linking and zero-config refresh support)
+- **Icons:** Lucide React
+- **CI/CD:** GitHub Actions (`actions/deploy-pages@v4`, `actions/upload-pages-artifact@v3`, `actions/configure-pages@v5`)

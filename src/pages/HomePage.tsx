@@ -183,7 +183,7 @@ export const HomePage: React.FC = () => {
                 {/* Main Image Frame */}
                 <div className="relative rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-xl">
                   <img
-                    src="/streamer-hero.jpg"
+                    src={`${import.meta.env.BASE_URL}streamer-hero.jpg`}
                     alt="STREAMER Sci-Fi Model — Aerospace, Robotics & Space Exploration"
                     className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
                   />

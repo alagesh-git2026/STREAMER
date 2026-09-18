@@ -202,7 +202,7 @@ export const ExecutivePeerTrackerReport: React.FC<ExecutivePeerTrackerReportProp
       {/* ========================================================= */}
       <div className="flex items-center justify-between border-b-2 border-slate-900 pb-2 mb-2.5">
         <div className="flex items-center space-x-3">
-          <img src="/lof-logo.png" alt="Lab of Future Logo" className="h-9 w-auto object-contain shrink-0" />
+          <img src={`${import.meta.env.BASE_URL}lof-logo.png`} alt="Lab of Future Logo" className="h-9 w-auto object-contain shrink-0" />
           <div>
             <div className="flex items-center space-x-2">
               <h1 className="text-sm sm:text-base font-black uppercase tracking-tight text-slate-950">
