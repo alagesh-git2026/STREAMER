@@ -1,0 +1,260 @@
+ROLE
+You are building a web application called the "STREAMER Portfolio" for Lab of
+Future (LOF), an experiential K-12 STEM lab operating across India, UAE, USA,
+and China. This is an internal analytics dashboard used to showcase student
+skill development to parents and, in select cases, to STEM companies scouting
+talent. Treat this as a real, production-quality build — not a mockup.
+
+OBJECTIVE
+Build a 3-page (minimum) web dashboard, with a student detail view, that
+visualizes every enrolled student's growth across the STREAMER framework
+(Science, Technology, Research, Engineering, Arts, Mathematics,
+Entrepreneurship, Resilience), cross-tagged with UN Sustainable Development
+Goals (SDGs) addressed through their projects, and mapped to 21st Century
+Skills. Use realistic sample data — no real student data exists yet.
+
+TECH STACK
+- React 18 + Vite
+- React Router for the 3 pages + a nested student detail route
+- Tailwind CSS for styling
+- Recharts for all charts (radar, bar, line)
+- All sample data lives in a single typed data file (src/data/students.ts or
+  .json) so it can be swapped for a real API later without touching any
+  component. Do not hardcode student data inside components.
+- Run it as a local dev server; verify every page in your built-in browser
+  before considering the task done.
+
+DESIGN SYSTEM — "International STEM Dashboard on a STREAMER Background"
+This should read as a premium, globally-minded analytics product (think a
+school-accreditation or edtech investor dashboard), not a playful kids' app.
+- Base palette: deep graphite/navy background (#12161F) with a lighter
+  content surface (#1B2130), high-contrast off-white text (#F4F5F7).
+- Each STREAMER pillar has ONE fixed color used everywhere it appears (tags,
+  chart series, badges) — never remap these per page:
+    Science          #2255A4
+    Technology        #0E7C6F
+    Research          #B65529
+    Engineering       #5A3FA0
+    Arts              #C23768
+    Mathematics       #41722E
+    Entrepreneurship  #9A6C10
+    Resilience        #1D6FA5
+- A subtle world-map or globe motif in the header/hero reinforces the
+  "international" framing (SVG line-art, low-opacity, not a stock photo).
+- Typography: one confident geometric sans for headings/numbers (e.g. Space
+  Grotesk or similar via Google Fonts), one highly legible sans for body
+  text (e.g. Inter). Numbers are a first-class visual element — treat scores
+  and deltas as headline typography, not small print.
+- Motion: reserve animation for one thing — a smooth radar-chart draw-in on
+  first load of the student report. No scroll-triggered fade-ins on every
+  card.
+
+DATA MODEL
+Define and populate ~15 sample students across all three domains and at
+least 4 centres (India — 2 different states, UAE, USA, China) so the
+dashboard genuinely reads as international. Each student record:
+
+{
+  id, name, age, grade, domain: "Aerospace" | "Robotics" | "Space & Astro",
+  centre: { city, country },
+  batch: string,
+  enrolledDate: ISO date,               // "Day 0"
+  diagnostic: {
+    attended: boolean,                  // NOT every student took the DSR
+    date, levelTested, questionsTotal, questionsCorrect,
+    timeUsedMinutes, timeAllowedMinutes: 45,
+    placedLevel: "Explorer" | "Builder" | "Innovator"
+  } | null,
+  skillScores: {                        // one entry per skill category below
+    [skillCategory]: {
+      day0: number (0-100) | null,      // null if no diagnostic attended
+      ytd: number (0-100),
+      byProject: [
+        { projectName, date, score, sdgTags: string[] }
+      ]
+    }
+  },
+  badges: [
+    { name, tier: "Explorer" | "Builder" | "Innovator" | "Skill Mastery",
+      dateEarned, relatedSkill?: string }
+  ]
+}
+
+SKILL CATEGORIES → STREAMER PILLAR (from the Diagnostic Study Framework,
+Section 4a — do not deviate from this mapping):
+  Conceptual Foundation      → Science
+  Circuit Basics             → Technology
+  Data Analysis              → Research
+  Awareness of Materials     → Engineering
+  Equipment Handling         → Engineering
+  Creativity / Design Thinking → Arts
+  Mathematics (blended)      → Mathematics
+  Decision Making            → Entrepreneurship
+  Troubleshooting            → Resilience
+  Communication & Collaboration → Portfolio Add-On (not part of the
+      diagnostic test bank; assessed via project presentations only)
+
+A pillar's score = the skill score directly, EXCEPT Engineering, which
+averages Awareness of Materials + Equipment Handling.
+
+RUBRIC (measurable, 4-band, identical structure for every skill — display
+this legend on the Performance Insights page and color-code every score
+against it):
+  Emerging    0–39   "Still building foundational understanding; needs guided support"
+  Developing  40–64  "Applies the skill with some guidance; inconsistent independently"
+  Proficient  65–84  "Applies the skill independently and accurately in familiar project contexts"
+  Advanced    85–100 "Applies the skill independently in novel or complex contexts; can mentor peers"
+
+SDG TAGGING (keep the set small and defensible — do not use all 17):
+  Use only these 6, tagged per project based on project theme:
+    SDG 4  Quality Education
+    SDG 7  Affordable & Clean Energy
+    SDG 9  Industry, Innovation & Infrastructure
+    SDG 11 Sustainable Cities & Communities
+    SDG 12 Responsible Consumption & Production
+    SDG 13 Climate Action
+  Example: a solar-powered rover project tags SDG 7 + SDG 13. A smart-traffic
+  robotics project tags SDG 9 + SDG 11. Every project needs 1–2 tags, never 0.
+
+21ST CENTURY SKILLS — derive these from STREAMER pillar scores using this
+EXACT formula (must be explainable, not random, since this is shown to
+parents and companies):
+  Critical Thinking = average(Research, Science)
+  Creativity         = Arts (direct)
+  Communication       = Communication & Collaboration add-on (direct)
+  Collaboration       = average(Communication & Collaboration add-on, Entrepreneurship)
+  Digital Literacy    = average(Technology, Engineering)
+  Leadership          = average(Entrepreneurship, Communication & Collaboration add-on)
+  Adaptability         = Resilience (direct)
+  Initiative           = average(Entrepreneurship, Resilience)
+Show this formula in a small "How these scores are calculated" expandable
+note wherever 21st Century Skills appear — never present them as if
+independently measured.
+
+FUTURE READY SCORE (composite headline metric, used only on Page 3):
+  Future Ready Score = 0.5 × (STREAMER composite, avg of 8 pillars)
+                      + 0.3 × (21st Century Skills composite, avg of 8 skills)
+                      + 0.2 × (SDG breadth, = distinct SDGs addressed ÷ 6 × 100)
+Round to 1 decimal. Show the three components broken out, not just the
+final number — a parent or recruiter should be able to see what it's made of.
+
+======================================================================
+PAGE 1 — HOME
+======================================================================
+Purpose: orient a first-time visitor (parent or recruiter) to what STREAMER
+is and why it exists, before they see any student data.
+
+Sections, top to bottom:
+1. Hero: LOF wordmark, page title ("The STREAMER Framework"), one-sentence
+   positioning, subtle world-map motif.
+2. STREAMER Tiles — 8 tiles, one per pillar, each showing:
+   - Pillar name + fixed pillar color
+   - The skill category(ies) it maps to (from the table above)
+   - A one-line description of what it measures (use the framework's own
+     "What It Checks For" language, e.g. Science/Conceptual Foundation =
+     "The core ideas that explain how and why a design behaves the way it does.")
+   - A "View skill blueprint" link/button that opens a modal or detail panel
+     showing: the full skill-to-pillar mapping table, an example diagnostic
+     question type for that skill, and which rubric band descriptions apply.
+3. "Why STREAMER" section — explain, in parent-readable language, how
+   STREAMER closes specific blind spots left by a Science/Technology/
+   Engineering/Mathematics-only model. Cover these four explicitly, each
+   tied to the pillar that fixes it:
+   - Research: traditional STEM teaches content but rarely tests whether a
+     learner can independently investigate and draw a fair conclusion from
+     their own data.
+   - Arts: creativity is usually treated as innate rather than teachable;
+     STREAMER scores original ideation as a developable skill.
+   - Entrepreneurship: STEM assessment rewards technical correctness, not
+     good judgment under real constraints of time, resources, or information.
+   - Resilience: conventional assessment rewards getting the right answer,
+     not how a learner responds to getting it wrong — Resilience is the only
+     pillar that scores recovery from failure itself.
+   Do not water this down to generic marketing copy — ground every claim in
+   the actual skill categories.
+
+======================================================================
+PAGE 2 — PERFORMANCE INSIGHTS
+======================================================================
+Purpose: the working dashboard for staff/parents to see how students and
+batches are performing.
+
+Sections, top to bottom:
+1. Rubric legend (the 4-band table above) — persistent/collapsible reference.
+2. Batch filter (dropdown or tabs) — filter the student tiles below by batch.
+3. Student tiles, grid layout, one per student, each showing:
+   - Name, domain, centre (city/country), batch
+   - A compact 8-pillar mini radar or bar sparkline (current YTD scores)
+   - Top strength pillar + its color
+   - Click anywhere on the tile → opens the Full Student Report.
+4. Full Student Report (separate route, e.g. /insights/student/:id — not a
+   modal, so it's a shareable/printable link):
+   - Header: name, photo placeholder, domain, batch, centre, enrolled date
+   - DSR panel: IF diagnostic.attended is true, show date, level tested,
+     score, time used, placed level, styled as a distinct "report card"
+     element. IF false, show a clear "No diagnostic on file — placed by
+     trainer assessment" state instead of hiding the section silently.
+   - Skill Scorecard: all skill categories, Day 0 → YTD bars, pillar-tagged,
+     rubric-band color coding
+   - Per-project performance: a table or timeline of byProject entries per
+     skill, showing project name, date, score, SDG tags
+   - Top 5 / Bottom 5 (ranked from the 9 non-add-on skills + the
+     Communication & Collaboration add-on = 10 total, same logic as the
+     rubric)
+   - Badges earned: visual badge row, tier-colored, with date earned
+   - 21st Century Skills panel with the calculation-transparency note
+   - A "Download / Print Report" action (browser print stylesheet is fine —
+     doesn't need to generate a real PDF)
+
+======================================================================
+PAGE 3 — FUTURE READY PROFILES
+======================================================================
+Purpose: let a recruiter or centre head find the strongest students per
+subject domain, ranked on a single defensible composite.
+
+Sections:
+1. Domain filter: Aerospace | Robotics | Space & Astro (tabs or segmented
+   control) — plus an "All Domains" option.
+2. Ranked profile cards for the filtered domain, sorted by Future Ready
+   Score descending, top 5 per domain by default with a "show more" option:
+   - Name, domain, centre, Future Ready Score (large, headline number)
+   - The 3-component breakdown (STREAMER / 21st Century / SDG breadth) as a
+     small stacked bar or three mini-bars, not just the final number
+   - Top 3 STREAMER strengths, top 2 21st Century Skills, SDGs addressed
+     (as small chips)
+   - Badges earned
+   - Link through to the same Full Student Report used on Page 2 — do not
+     build a second, different report view.
+
+======================================================================
+CROSS-CUTTING REQUIREMENTS
+======================================================================
+- Fully responsive down to a 390px-wide mobile viewport on all 3 pages and
+  the student report.
+- No console errors or warnings on any page.
+- Every chart must render with the actual sample data, not placeholder
+  Lorem Ipsum numbers.
+- Keyboard focus must be visible on all interactive elements (tiles, filters,
+  links).
+- Use semantic HTML and reasonable color contrast — this will be shown to
+  parents and external companies, so it needs to look and behave like a real
+  product, not a prototype.
+
+DEFINITION OF DONE — verify each of these yourself in your built-in browser
+before reporting the task complete:
+[ ] All 3 pages load without errors
+[ ] Home page: all 8 STREAMER tiles render with working "View skill
+    blueprint" links/modals
+[ ] Performance Insights: batch filter works, student tiles render, clicking
+    a tile opens that student's Full Student Report at its own URL
+[ ] Full Student Report: DSR section correctly handles both
+    attended-diagnostic and no-diagnostic students (verify with at least one
+    of each in your sample data)
+[ ] Top 5 / Bottom 5 correctly recompute per student from their own scores
+    (not hardcoded)
+[ ] Badges render for at least one student with multiple tiers
+[ ] Future Ready Profiles: domain filter works, ranking is correctly sorted
+    by Future Ready Score, breakdown bars sum sensibly to the headline number
+[ ] Mobile viewport (390px) checked on all 3 pages
+[ ] Take a screenshot of all 3 pages plus one Full Student Report and
+    include them in your final artifact/walkthrough for review
