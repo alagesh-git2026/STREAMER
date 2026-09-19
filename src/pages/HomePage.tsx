@@ -181,58 +181,12 @@ export const HomePage: React.FC = () => {
                 <div className="absolute -inset-1.5 bg-gradient-to-tr from-streamer-science via-cyan-400 to-streamer-engineering rounded-3xl blur-md opacity-25 group-hover:opacity-40 transition-opacity" />
                 
                 {/* Main Image Frame */}
-                <div className="relative rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-xl">
+                <div className="relative rounded-3xl overflow-hidden bg-white border border-slate-200/90 shadow-2xl">
                   <img
-                    src={`${import.meta.env.BASE_URL}streamer-hero.jpg?v=2`}
-                    alt="STREAMER Innovation Nexus — 8-Pillar Multidisciplinary Architecture in Aerospace, Robotics & Space"
+                    src={`${import.meta.env.BASE_URL}streamer-hero.jpg?v=3`}
+                    alt="STREAMER Innovation Nexus — Self-Explanatory 8-Pillar Hologram in Aerospace, Robotics & Space"
                     className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
-                  
-                  {/* Floating Tech HUD Overlay */}
-                  <div className="absolute bottom-3 left-3 right-3 p-3.5 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200/80 shadow-lg flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-streamer-science font-mono flex items-center space-x-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
-                          <span>STREAMER Innovation Nexus</span>
-                        </div>
-                        <div className="text-xs font-bold text-slate-900 mt-0.5">
-                          8-Pillar Interdisciplinary Architecture
-                        </div>
-                      </div>
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 shadow-xs">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        8 Pillars Active
-                      </span>
-                    </div>
-
-                    {/* 8-Letter STREAMER Color Dots Strip */}
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                      {[
-                        { letter: "S", name: "Science", color: "#2255A4" },
-                        { letter: "T", name: "Technology", color: "#0E7C6F" },
-                        { letter: "R", name: "Research", color: "#B65529" },
-                        { letter: "E", name: "Engineering", color: "#5A3FA0" },
-                        { letter: "A", name: "Arts", color: "#C23768" },
-                        { letter: "M", name: "Maths", color: "#41722E" },
-                        { letter: "E", name: "Entrepreneurship", color: "#9A6C10" },
-                        { letter: "R", name: "Resilience", color: "#1D6FA5" },
-                      ].map((item, idx) => (
-                        <div
-                          key={idx}
-                          title={`${item.name} (${item.letter})`}
-                          className="flex flex-col items-center cursor-default group/dot"
-                        >
-                          <span
-                            className="w-5 h-5 rounded-md text-[10px] font-bold font-mono text-white flex items-center justify-center shadow-xs transition-transform group-hover/dot:scale-115"
-                            style={{ backgroundColor: item.color }}
-                          >
-                            {item.letter}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
