@@ -5,6 +5,7 @@ import { HomePage } from "./pages/HomePage";
 import { PerformanceInsightsPage } from "./pages/PerformanceInsightsPage";
 import { StudentReportPage } from "./pages/StudentReportPage";
 import { FutureReadyProfilesPage } from "./pages/FutureReadyProfilesPage";
+import { FutureReadyStudentDossierPage } from "./pages/FutureReadyStudentDossierPage";
 import { StudentDataProvider } from "./context/StudentDataContext";
 
 export const App: React.FC = () => {
@@ -19,6 +20,7 @@ export const App: React.FC = () => {
             <Route path="/insights" element={<PerformanceInsightsPage />} />
             <Route path="/insights/student/:id" element={<StudentReportPage />} />
             <Route path="/profiles" element={<FutureReadyProfilesPage />} />
+            <Route path="/profiles/student/:id" element={<FutureReadyStudentDossierPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>

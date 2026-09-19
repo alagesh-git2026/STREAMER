@@ -7,6 +7,8 @@ import {
   calculate21stCenturySkills 
 } from "../utils/calculations";
 import { determineFutureReadyRole, type FutureReadyRole } from "../utils/careerMapping";
+import { triggerLandscapePdfPrint } from "../utils/executiveExportUtils";
+import { ExecutiveFutureReadyReport } from "../components/dashboard/ExecutiveFutureReadyReport";
 import { 
   Award, 
   Sparkles, 
@@ -15,13 +17,15 @@ import {
   ChevronDown, 
   ChevronUp, 
   HelpCircle,
-  ExternalLink,
   Target,
   Briefcase,
   RotateCcw,
   Search,
   Globe,
   MapPin,
+  TrendingUp,
+  Filter,
+  Printer,
   X
 } from "lucide-react";
 
@@ -45,6 +49,17 @@ const INNOVATION_CENTRES: CentreConfig[] = [
   { id: "New Delhi", name: "New Delhi Aerospace Hub", city: "New Delhi", country: "India", flag: "🇮🇳", code: "DEL", specialty: "Telemetry & CFD Design" },
 ];
 
+const STREAMER_PILLARS_LIST = [
+  { name: "Science", color: "#2255A4" },
+  { name: "Technology", color: "#0E7C6F" },
+  { name: "Research", color: "#B65529" },
+  { name: "Engineering", color: "#5A3FA0" },
+  { name: "Arts", color: "#C23768" },
+  { name: "Mathematics", color: "#41722E" },
+  { name: "Entrepreneurship", color: "#9A6C10" },
+  { name: "Resilience", color: "#1D6FA5" },
+];
+
 export const FutureReadyProfilesPage: React.FC = () => {
   const { students } = useStudentData();
 
@@ -52,11 +67,22 @@ export const FutureReadyProfilesPage: React.FC = () => {
   const [selectedCentre, setSelectedCentre] = useState<string>("All Centres");
   const [selectedDomain, setSelectedDomain] = useState<string>("All Domains");
   const [selectedRole, setSelectedRole] = useState<string>("All Roles");
+  const [selectedPillars, setSelectedPillars] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [visibleLimit, setVisibleLimit] = useState<number>(5);
   const [isFormulaExpanded, setIsFormulaExpanded] = useState<boolean>(false);
 
   const domains = ["All Domains", "Aerospace", "Robotics", "Space & Astro"];
+
+  // Toggle multi-select STREAMER pillar
+  const togglePillar = (pillarName: string) => {
+    setSelectedPillars(prev => 
+      prev.includes(pillarName) 
+        ? prev.filter(p => p !== pillarName)
+        : [...prev, pillarName]
+    );
+    setVisibleLimit(5);
+  };
 
   // Enrich students with computed Future Ready data and Career Role Trajectories
   const enrichedStudents = useMemo(() => {
@@ -163,7 +189,7 @@ export const FutureReadyProfilesPage: React.FC = () => {
     };
   }, [enrichedStudents, selectedCentre, selectedDomain]);
 
-  // Filtered and Ranked Students
+  // Filtered and Ranked Students (with Multi-Choice STEAMER Pillar Filter)
   const rankedStudents = useMemo(() => {
     const filtered = enrichedStudents.filter(item => {
       const matchCentre = selectedCentre === "All Centres" || item.student.centre.city === selectedCentre;
@@ -177,12 +203,20 @@ export const FutureReadyProfilesPage: React.FC = () => {
         item.careerRole.roleTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.careerRole.hiringOrganizations.some(org => org.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      return matchCentre && matchDomain && matchRole && matchSearch;
+      // Multi-Choice STREAMER Pillar Filter
+      const matchPillars = selectedPillars.length === 0 ||
+        selectedPillars.some(p => 
+          item.topPillars.some(top => top.pillar === p) ||
+          item.careerRole.requiredCompetencies.includes(p) ||
+          item.careerRole.competencyTriplet.includes(p)
+        );
+
+      return matchCentre && matchDomain && matchRole && matchSearch && matchPillars;
     });
 
     // Sort descending by Future Ready Score
     return filtered.sort((a, b) => b.breakdown.futureReadyScore - a.breakdown.futureReadyScore);
-  }, [enrichedStudents, selectedCentre, selectedDomain, selectedRole, searchQuery]);
+  }, [enrichedStudents, selectedCentre, selectedDomain, selectedRole, selectedPillars, searchQuery]);
 
   const displayedStudents = rankedStudents.slice(0, visibleLimit);
   const hasMore = visibleLimit < rankedStudents.length;
@@ -191,13 +225,15 @@ export const FutureReadyProfilesPage: React.FC = () => {
     setSelectedCentre("All Centres");
     setSelectedDomain("All Domains");
     setSelectedRole("All Roles");
+    setSelectedPillars([]);
     setSearchQuery("");
     setVisibleLimit(5);
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-background text-slate-900">
-      {/* 1. Header with Title & Formula Toggle */}
+      
+      {/* 1. Header with Title, Print PDF Button & Formula Toggle */}
       <div className="mb-8">
         <div className="flex items-center space-x-2 text-xs font-bold text-streamer-science uppercase tracking-wider">
           <Award className="w-4 h-4" />
@@ -209,18 +245,29 @@ export const FutureReadyProfilesPage: React.FC = () => {
               Future Ready Talent Leaderboard
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1 font-normal max-w-3xl">
-              Spotlighting top student competencies matched to high-demand real-world industry roles and actively hiring global enterprises (<span className="text-slate-700 font-semibold">NASA, Tesla, ISRO, ESA, TATA, SpaceX</span>).
+              Spotlighting top student competencies matched to high-demand real-world industry roles, expected market salary benchmarks, and actively hiring global enterprises (<span className="text-slate-700 font-semibold">NASA, Tesla, ISRO, ESA, TATA, SpaceX</span>).
             </p>
           </div>
 
-          <button
-            onClick={() => setIsFormulaExpanded(!isFormulaExpanded)}
-            className="inline-flex items-center space-x-1.5 text-xs text-streamer-science hover:text-blue-700 bg-white px-4 py-2 rounded-xl border border-slate-200 transition-colors self-start md:self-auto shadow-2xs font-semibold cursor-pointer"
-          >
-            <HelpCircle className="w-4 h-4" />
-            <span>Composite Formula</span>
-            {isFormulaExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </button>
+          <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
+            {/* Single Page Landscape PDF Export Button */}
+            <button
+              onClick={() => triggerLandscapePdfPrint(`Future_Ready_Talent_Pipeline_${selectedCentre}`)}
+              className="inline-flex items-center space-x-1.5 text-xs text-white bg-slate-900 hover:bg-slate-800 px-4 py-2 rounded-xl transition-all shadow-2xs font-bold cursor-pointer"
+            >
+              <Printer className="w-4 h-4 text-cyan-400" />
+              <span>Export PDF (Landscape)</span>
+            </button>
+
+            <button
+              onClick={() => setIsFormulaExpanded(!isFormulaExpanded)}
+              className="inline-flex items-center space-x-1.5 text-xs text-streamer-science hover:text-blue-700 bg-white px-4 py-2 rounded-xl border border-slate-200 transition-colors shadow-2xs font-semibold cursor-pointer"
+            >
+              <HelpCircle className="w-4 h-4" />
+              <span>Composite Formula</span>
+              {isFormulaExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -255,7 +302,7 @@ export const FutureReadyProfilesPage: React.FC = () => {
       )}
 
       {/* 2. FUTURISTIC BI CENTERWISE INNOVATION HUB (Interactive Infographic Filter) */}
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
@@ -326,7 +373,73 @@ export const FutureReadyProfilesPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. CENTER BI INTELLIGENCE STRIP & LIVE SCOPE SUMMARY */}
+      {/* 3. MULTI-CHOICE STREAMER LEVEL FILTER BAR */}
+      <div className="mb-6 p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
+          <div className="flex items-center space-x-2">
+            <Filter className="w-3.5 h-3.5 text-blue-600" />
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-700 font-mono">
+              Multi-Choice STREAMER Level Filter (Select to inspect candidates & matching roles):
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-2 text-xs">
+            {selectedPillars.length > 0 && (
+              <button
+                onClick={() => setSelectedPillars([])}
+                className="text-xs font-bold text-blue-600 hover:underline cursor-pointer"
+              >
+                Clear Pillars ({selectedPillars.length} active)
+              </button>
+            )}
+            <button
+              onClick={() => setSelectedPillars(STREAMER_PILLARS_LIST.map(p => p.name))}
+              className="text-xs font-bold text-slate-500 hover:text-slate-800 cursor-pointer"
+            >
+              Select All 8
+            </button>
+          </div>
+        </div>
+
+        {/* 8 Multi-Select Pill Toggles */}
+        <div className="flex flex-wrap items-center gap-2">
+          {STREAMER_PILLARS_LIST.map((p) => {
+            const isSelected = selectedPillars.includes(p.name);
+            return (
+              <button
+                key={p.name}
+                type="button"
+                onClick={() => togglePillar(p.name)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border flex items-center space-x-1.5 ${
+                  isSelected
+                    ? "bg-slate-900 text-white border-slate-900 shadow-sm ring-1 ring-slate-900/30"
+                    : "bg-slate-50 text-slate-700 hover:bg-slate-100 border-slate-200"
+                }`}
+              >
+                <span 
+                  className="w-2.5 h-2.5 rounded-full shrink-0" 
+                  style={{ backgroundColor: p.color }} 
+                />
+                <span>{p.name}</span>
+                {isSelected && <span className="text-[10px] text-cyan-300 font-mono">✓</span>}
+              </button>
+            );
+          })}
+        </div>
+
+        {selectedPillars.length > 0 && (
+          <div className="mt-2.5 pt-2 border-t border-slate-100 text-[11px] text-slate-600 flex items-center justify-between">
+            <span>
+              Targeting candidates with high mastery in: <strong className="text-slate-900">{selectedPillars.join(" • ")}</strong>
+            </span>
+            <span className="font-mono text-blue-700 font-bold">
+              {rankedStudents.length} candidates match
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* 4. CENTER BI INTELLIGENCE STRIP & LIVE SCOPE SUMMARY */}
       <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           {/* Active Scope Summary */}
@@ -419,7 +532,7 @@ export const FutureReadyProfilesPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. COMPACT SINGLE-ROW SLICERS TOOLBAR */}
+      {/* 5. COMPACT SINGLE-ROW SLICERS TOOLBAR */}
       <div className="mb-6 p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Search Box */}
@@ -481,7 +594,7 @@ export const FutureReadyProfilesPage: React.FC = () => {
           </div>
 
           {/* Reset Filters */}
-          {(selectedCentre !== "All Centres" || selectedDomain !== "All Domains" || selectedRole !== "All Roles" || searchQuery !== "") && (
+          {(selectedCentre !== "All Centres" || selectedDomain !== "All Domains" || selectedRole !== "All Roles" || selectedPillars.length > 0 || searchQuery !== "") && (
             <button
               type="button"
               onClick={handleResetFilters}
@@ -498,7 +611,7 @@ export const FutureReadyProfilesPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 5. SPOTLIGHTED INFOGRAPHIC CANDIDATE DOSSIERS */}
+      {/* 6. SPOTLIGHTED INFOGRAPHIC CANDIDATE DOSSIERS */}
       {displayedStudents.length === 0 ? (
         <div className="p-12 text-center rounded-3xl bg-white border border-slate-200 shadow-sm">
           <p className="text-slate-500 text-sm">No future-ready profiles match the selected filters.</p>
@@ -558,7 +671,7 @@ export const FutureReadyProfilesPage: React.FC = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2.5">
                           <Link 
-                            to={`/insights/student/${student.id}`}
+                            to={`/profiles/student/${student.id}`}
                             className="text-xl sm:text-2xl font-display font-black text-slate-900 hover:text-blue-600 transition-colors group flex items-center space-x-1.5"
                           >
                             <span>{student.name}</span>
@@ -617,11 +730,11 @@ export const FutureReadyProfilesPage: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* ZONE B: DEDICATED REAL-WORLD CAREER ROLE & DEMANDING ENTERPRISES (THE USP SHOWCASE) */}
+                    {/* ZONE B: TARGET CAREER ROLE, SALARY SPOTLIGHT & DEMANDING ENTERPRISES */}
                     <div className="mt-4 p-5 rounded-2xl bg-gradient-to-br from-slate-50 via-slate-50/60 to-blue-50/30 border border-slate-200/90 shadow-2xs">
                       
-                      {/* Role Header */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      {/* Role Header with Spotlighted Market Salary */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
                           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono block">
                             Target Real-World Career Role
@@ -631,7 +744,14 @@ export const FutureReadyProfilesPage: React.FC = () => {
                           </h3>
                         </div>
 
-                        <div className="flex items-center space-x-2 self-start sm:self-auto">
+                        {/* TENTATIVE MARKET SALARY SPOTLIGHT BADGE */}
+                        <div className="flex items-center space-x-2 self-start sm:self-auto flex-wrap gap-y-1">
+                          <div className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold font-display shadow-2xs">
+                            <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>Market Salary: {careerRole.tentativeSalary}</span>
+                            <span className="text-[10px] text-emerald-700 font-mono font-normal">({careerRole.tentativeSalaryInr})</span>
+                          </div>
+                          
                           <span
                             className="px-2.5 py-1 rounded-lg text-xs font-bold text-white shadow-xs"
                             style={{ backgroundColor: careerRole.sectorColor }}
@@ -657,7 +777,7 @@ export const FutureReadyProfilesPage: React.FC = () => {
                           {careerRole.hiringOrganizations.map((org) => (
                             <span
                               key={org}
-                              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-900 text-white font-display font-bold text-xs shadow-xs hover:bg-slate-800 transition-colors"
+                              className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-slate-900 text-white font-display font-bold text-xs shadow-xs hover:bg-slate-800 transition-colors"
                             >
                               <Briefcase className="w-3 h-3 text-cyan-400" />
                               <span>{org}</span>
@@ -681,7 +801,7 @@ export const FutureReadyProfilesPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* RIGHT ZONE: INFOGRAPHIC FUTURE READY SCORE HUB (NO CHART CLUTTER) */}
+                  {/* RIGHT ZONE: INFOGRAPHIC FUTURE READY SCORE HUB */}
                   <div className="lg:w-72 shrink-0 p-5 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between shadow-xs">
                     <div>
                       <div className="text-center pb-2">
@@ -758,14 +878,14 @@ export const FutureReadyProfilesPage: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Action Button to Full Student Dossier */}
+                    {/* DEDICATED FUTURE READY DOSSIER LINK */}
                     <div className="mt-4 pt-3 border-t border-slate-100">
                       <Link
-                        to={`/insights/student/${student.id}`}
-                        className="w-full py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all shadow-2xs group"
+                        to={`/profiles/student/${student.id}`}
+                        className="w-full py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 text-white bg-slate-900 hover:bg-slate-800 transition-all shadow-xs group cursor-pointer"
                       >
-                        <span>Open Verified Dossier</span>
-                        <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-slate-900" />
+                        <span>Inspect Future Ready Dossier</span>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-cyan-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                       </Link>
                     </div>
                   </div>
@@ -787,6 +907,18 @@ export const FutureReadyProfilesPage: React.FC = () => {
           </button>
         </div>
       )}
+
+      {/* Single-Page Landscape Printable Report for PDF Export */}
+      <div className="hidden print-only-block">
+        <ExecutiveFutureReadyReport
+          enrichedStudents={rankedStudents}
+          selectedCentre={selectedCentre}
+          selectedPillars={selectedPillars}
+          selectedDomain={selectedDomain}
+          selectedRole={selectedRole}
+          isPrintOnly={true}
+        />
+      </div>
     </div>
   );
 };

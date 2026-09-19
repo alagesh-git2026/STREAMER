@@ -12,6 +12,10 @@ export interface FutureReadyRole {
   requiredCompetencies: string[];
   fitScore: number;
   industryDemand: "High Growth" | "Critical Scarcity" | "Strategic Frontier";
+  tentativeSalary: string;
+  tentativeSalaryInr: string;
+  medianSalaryUsd: number;
+  salaryTier: string;
 }
 
 /**
@@ -56,6 +60,10 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
         requiredCompetencies: ["Mathematics", "Research", "Arts", "Creativity"],
         fitScore: avgTopScore,
         industryDemand: "High Growth",
+        tentativeSalary: "$95,000 – $135,000 / yr",
+        tentativeSalaryInr: "₹18L – ₹28L CTC",
+        medianSalaryUsd: 115000,
+        salaryTier: "Specialized Creative STEM"
       };
     } else if (domain === "Robotics") {
       return {
@@ -69,6 +77,10 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
         requiredCompetencies: ["Arts", "Research", "Mathematics", "Design Thinking"],
         fitScore: avgTopScore,
         industryDemand: "Critical Scarcity",
+        tentativeSalary: "$110,000 – $150,000 / yr",
+        tentativeSalaryInr: "₹22L – ₹32L CTC",
+        medianSalaryUsd: 130000,
+        salaryTier: "HMI & Ergonomic Engineering"
       };
     } else {
       return {
@@ -82,6 +94,10 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
         requiredCompetencies: ["Arts", "Research", "Mathematics", "Communication"],
         fitScore: avgTopScore,
         industryDemand: "High Growth",
+        tentativeSalary: "$105,000 – $145,000 / yr",
+        tentativeSalaryInr: "₹20L – ₹30L CTC",
+        medianSalaryUsd: 125000,
+        salaryTier: "Aerospace Visualization Tier"
       };
     }
   }
@@ -99,6 +115,10 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
       requiredCompetencies: ["Mathematics", "Technology", "Science", "Digital Literacy"],
       fitScore: avgTopScore,
       industryDemand: "Critical Scarcity",
+      tentativeSalary: "$145,000 – $185,000 / yr",
+      tentativeSalaryInr: "₹28L – ₹42L CTC",
+      medianSalaryUsd: 165000,
+      salaryTier: "Top 10% DeepTech AI Tier"
     };
   }
 
@@ -115,6 +135,10 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
       requiredCompetencies: ["Research", "Mathematics", "Science", "Critical Thinking"],
       fitScore: avgTopScore,
       industryDemand: "Strategic Frontier",
+      tentativeSalary: "$135,000 – $180,000 / yr",
+      tentativeSalaryInr: "₹26L – ₹38L CTC",
+      medianSalaryUsd: 158000,
+      salaryTier: "Strategic Astrodynamics Tier"
     };
   }
 
@@ -131,6 +155,10 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
       requiredCompetencies: ["Research", "Mathematics", "Science", "Data Analysis"],
       fitScore: avgTopScore,
       industryDemand: "Strategic Frontier",
+      tentativeSalary: "$140,000 – $185,000 / yr",
+      tentativeSalaryInr: "₹28L – ₹40L CTC",
+      medianSalaryUsd: 162000,
+      salaryTier: "Big Data & Astrophysics Tier"
     };
   }
 
@@ -147,6 +175,10 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
       requiredCompetencies: ["Research", "Technology", "Mathematics", "Critical Thinking"],
       fitScore: avgTopScore,
       industryDemand: "High Growth",
+      tentativeSalary: "$130,000 – $170,000 / yr",
+      tentativeSalaryInr: "₹25L – ₹36L CTC",
+      medianSalaryUsd: 150000,
+      salaryTier: "Earth Observation AI Tier"
     };
   }
 
@@ -163,6 +195,10 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
       requiredCompetencies: ["Mathematics", "Science", "Arts", "Creativity"],
       fitScore: avgTopScore,
       industryDemand: "Strategic Frontier",
+      tentativeSalary: "$140,000 – $180,000 / yr",
+      tentativeSalaryInr: "₹27L – ₹38L CTC",
+      medianSalaryUsd: 160000,
+      salaryTier: "Generative Aerospace Tier"
     };
   }
 
@@ -179,6 +215,10 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
       requiredCompetencies: ["Resilience", "Technology", "Troubleshooting", "Adaptability"],
       fitScore: avgTopScore,
       industryDemand: "Critical Scarcity",
+      tentativeSalary: "$135,000 – $175,000 / yr",
+      tentativeSalaryInr: "₹26L – ₹36L CTC",
+      medianSalaryUsd: 155000,
+      salaryTier: "Mission-Critical Systems Tier"
     };
   }
 
@@ -195,6 +235,10 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
       requiredCompetencies: ["Entrepreneurship", "Decision Making", "Leadership", "Arts"],
       fitScore: avgTopScore,
       industryDemand: "High Growth",
+      tentativeSalary: "$150,000 – $210,000 / yr",
+      tentativeSalaryInr: "₹30L – ₹48L CTC",
+      medianSalaryUsd: 180000,
+      salaryTier: "Executive NewSpace Tier"
     };
   }
 
@@ -211,6 +255,10 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
       requiredCompetencies: ["Arts", "Entrepreneurship", "Empathy", "Creativity"],
       fitScore: avgTopScore,
       industryDemand: "High Growth",
+      tentativeSalary: "$120,000 – $160,000 / yr",
+      tentativeSalaryInr: "₹22L – ₹34L CTC",
+      medianSalaryUsd: 140000,
+      salaryTier: "Assistive MedTech Tier"
     };
   }
 
@@ -227,6 +275,10 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
       requiredCompetencies: ["Arts", "Resilience", "Human Factors", "Creativity"],
       fitScore: avgTopScore,
       industryDemand: "Critical Scarcity",
+      tentativeSalary: "$125,000 – $165,000 / yr",
+      tentativeSalaryInr: "₹24L – ₹35L CTC",
+      medianSalaryUsd: 145000,
+      salaryTier: "Cyber-Physical Ergonomics Tier"
     };
   }
 
@@ -243,6 +295,10 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
       requiredCompetencies: ["Arts", "Mathematics", "Research", "Design Thinking"],
       fitScore: avgTopScore,
       industryDemand: "High Growth",
+      tentativeSalary: "$130,000 – $170,000 / yr",
+      tentativeSalaryInr: "₹25L – ₹36L CTC",
+      medianSalaryUsd: 150000,
+      salaryTier: "Generative CAD & Structures Tier"
     };
   }
 
@@ -258,5 +314,9 @@ export function determineFutureReadyRole(student: Student): FutureReadyRole {
     requiredCompetencies: [...topPillarNames.slice(0, 2), topSkillNames[0]],
     fitScore: avgTopScore,
     industryDemand: "High Growth",
+    tentativeSalary: "$125,000 – $165,000 / yr",
+    tentativeSalaryInr: "₹24L – ₹35L CTC",
+    medianSalaryUsd: 145000,
+    salaryTier: "Systems Engineering Tier"
   };
 }
