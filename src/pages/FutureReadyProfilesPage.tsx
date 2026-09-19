@@ -231,7 +231,8 @@ export const FutureReadyProfilesPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-background text-slate-900">
+    <>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-background text-slate-900 hide-on-print">
       
       {/* 1. Header with Title, Print PDF Button & Formula Toggle */}
       <div className="mb-8">
@@ -907,6 +908,7 @@ export const FutureReadyProfilesPage: React.FC = () => {
           </button>
         </div>
       )}
+      </div>
 
       {/* Single-Page Landscape Printable Report for PDF Export */}
       <div className="hidden print-only-block">
@@ -919,6 +921,6 @@ export const FutureReadyProfilesPage: React.FC = () => {
           isPrintOnly={true}
         />
       </div>
-    </div>
+    </>
   );
 };

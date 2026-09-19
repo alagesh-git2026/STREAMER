@@ -21,6 +21,7 @@ import {
   MapPin, 
   Layers
 } from "lucide-react";
+import { ExecutiveStudentProposalReport } from "../components/dashboard/ExecutiveStudentProposalReport";
 import { 
   ResponsiveContainer, 
   RadarChart, 
@@ -113,7 +114,8 @@ export const FutureReadyStudentDossierPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-background text-slate-900">
+    <>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-background text-slate-900 hide-on-print">
       
       {/* 1. Header Toolbar (Back, Student Switcher, Print PDF) */}
       <div className="no-print flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-8 border-b border-slate-200">
@@ -566,5 +568,16 @@ export const FutureReadyStudentDossierPage: React.FC = () => {
         </div>
       </div>
     </div>
+
+    {/* Single-Page Landscape Talent Proposal for PDF Export */}
+    <div className="hidden print-only-block">
+      <ExecutiveStudentProposalReport
+        student={student}
+        rank={rank}
+        totalCandidates={allRanked.length}
+        isPrintOnly={true}
+      />
+    </div>
+  </>
   );
 };
