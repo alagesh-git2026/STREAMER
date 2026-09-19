@@ -130,13 +130,23 @@ export const StudentReportPage: React.FC = () => {
           <span>Back to Performance Insights</span>
         </Link>
 
-        <button
-          onClick={handlePrint}
-          className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold transition-colors shadow-xs"
-        >
-          <Printer className="w-4 h-4 text-streamer-science" />
-          <span>Download / Print Report</span>
-        </button>
+        <div className="flex items-center space-x-2.5">
+          <Link
+            to={`/profiles/student/${student.id}`}
+            className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-streamer-science border border-blue-200 text-xs font-bold transition-colors shadow-2xs"
+          >
+            <Target className="w-3.5 h-3.5" />
+            <span>Future Ready Career Dossier</span>
+          </Link>
+
+          <button
+            onClick={handlePrint}
+            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs font-semibold transition-colors shadow-xs"
+          >
+            <Printer className="w-4 h-4 text-streamer-science" />
+            <span>Download / Print Report</span>
+          </button>
+        </div>
       </div>
 
       {/* 1. Header: Student Profile Information */}
